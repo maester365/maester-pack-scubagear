@@ -2,5 +2,5 @@
 TestResults/
 test-results/
 maester-config.json
-# ScubaGear output written while you try the pack.
-M365BaselineConformance_*/
+# ScubaGear output written while you try the pack, at the root only: spec/fixtures holds a cut of one.
+/M365BaselineConformance_*/

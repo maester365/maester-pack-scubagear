@@ -1,0 +1,187 @@
+{
+  "MetaData": {
+    "TenantId": "22222222-2222-2222-2222-222222222222",
+    "DisplayName": "Contoso",
+    "DomainName": "contoso.onmicrosoft.com",
+    "ProductSuite": "Microsoft 365",
+    "ProductsAssessed": [
+      "Azure Active Directory",
+      "Exchange Online",
+      "Microsoft Power BI",
+      "Microsoft Power Platform",
+      "Security Suite",
+      "SharePoint Online",
+      "Microsoft Teams"
+    ],
+    "ProductAbbreviationMapping": {
+      "Microsoft Teams": "Teams",
+      "Security Suite": "SecuritySuite",
+      "Azure Active Directory": "AAD",
+      "SharePoint Online": "SharePoint",
+      "Microsoft Power Platform": "PowerPlatform",
+      "Microsoft Power BI": "PowerBI",
+      "Exchange Online": "EXO"
+    },
+    "Tool": "ScubaGear",
+    "ToolVersion": "2.0.0",
+    "TimestampZulu": "2026-01-15T10:00:00.000Z",
+    "ReportUUID": "00000000-0000-0000-0000-000000000000"
+  },
+  "Summary": {},
+  "AnnotatedFailedPolicies": {},
+  "Results": {
+    "AAD": [
+      {
+        "GroupName": "Risk-based Policies",
+        "GroupNumber": "2",
+        "GroupReferenceURL": "https://github.com/cisagov/ScubaGear/blob/v2.0.0/PowerShell/ScubaGear/baselines/aad.md#2-risk-based-policies",
+        "Controls": [
+          {
+            "Control ID": "MS.AAD.2.1v1",
+            "Requirement": "Users detected as high risk SHALL be blocked.<div class='policy-indicators'><a href='https://www.cisa.gov/news-events/directives/bod-25-01-implementation-guidance-implementing-secure-practices-cloud-services' target='_blank' class='indicator indicator-bod' title='BOD 25-01 Requirement'>BOD 25-01 Requirement</a><a href='https://github.com/cisagov/ScubaGear/blob/v2.0.0/PowerShell/ScubaGear/baselines/aad.md#key-terminology' target='_blank' class='indicator indicator-automated' title='Automated Check'>Automated Check</a><a href='https://github.com/cisagov/ScubaGear/blob/v2.0.0/docs/configuration/configuration.md#conditional-access-policy-exclusions' target='_blank' class='indicator indicator-configurable' title='Configurable'>Configurable</a></div>",
+            "Result": "Pass",
+            "Criticality": "Shall",
+            "Details": "1 conditional access policy(s) found that meet(s) all requirements: MS.AAD.2.1v1 Users detected as high risk SHALL be blocked. ",
+            "OmittedEvaluationResult": "N/A",
+            "OmittedEvaluationDetails": "N/A",
+            "IncorrectResult": "N/A",
+            "IncorrectResultDetails": "N/A",
+            "OriginalResult": "Pass",
+            "OriginalDetails": "1 conditional access policy(s) found that meet(s) all requirements:<br/>MS.AAD.2.1v1 Users detected as high risk SHALL be blocked. <a href='#caps'>View all CA policies</a>",
+            "Comments": [],
+            "ResolutionDate": null
+          },
+          {
+            "Control ID": "MS.AAD.2.2v1",
+            "Requirement": "A notification SHOULD be sent to the administrator when high-risk users are detected.<div class='policy-indicators'><a href='https://github.com/cisagov/ScubaGear/blob/v2.0.0/PowerShell/ScubaGear/baselines/aad.md#msaad22v1-instructions' target='_blank' class='indicator indicator-manual' title='Manual'>Manual</a></div>",
+            "Result": "N/A",
+            "Criticality": "Should/Not-Implemented",
+            "Details": "This product does not currently have the capability to check compliance for this policy. See Secure Configuration Baseline policy, https://github.com/cisagov/ScubaGear/blob/v2.0.0/PowerShell/ScubaGear/baselines/aad.md#msaad22v1 for instructions on manual check",
+            "OmittedEvaluationResult": "N/A",
+            "OmittedEvaluationDetails": "N/A",
+            "IncorrectResult": "N/A",
+            "IncorrectResultDetails": "N/A",
+            "OriginalResult": "N/A",
+            "OriginalDetails": "This product does not currently have the capability to check compliance for this policy. See <a href=\"https://github.com/cisagov/ScubaGear/blob/v2.0.0/PowerShell/ScubaGear/baselines/aad.md#msaad22v1\" target=\"_blank\">Secure Configuration Baseline policy</a> for instructions on manual check",
+            "Comments": [],
+            "ResolutionDate": null
+          }
+        ]
+      },
+      {
+        "GroupName": "Legacy Authentication",
+        "GroupNumber": "1",
+        "GroupReferenceURL": "https://github.com/cisagov/ScubaGear/blob/v2.0.0/PowerShell/ScubaGear/baselines/aad.md#1-legacy-authentication",
+        "Controls": [
+          {
+            "Control ID": "MS.AAD.1.1v1",
+            "Requirement": "Legacy authentication SHALL be blocked.<div class='policy-indicators'><a href='https://www.cisa.gov/news-events/directives/bod-25-01-implementation-guidance-implementing-secure-practices-cloud-services' target='_blank' class='indicator indicator-bod' title='BOD 25-01 Requirement'>BOD 25-01 Requirement</a><a href='https://github.com/cisagov/ScubaGear/blob/v2.0.0/PowerShell/ScubaGear/baselines/aad.md#key-terminology' target='_blank' class='indicator indicator-automated' title='Automated Check'>Automated Check</a><a href='https://github.com/cisagov/ScubaGear/blob/v2.0.0/docs/configuration/configuration.md#conditional-access-policy-exclusions' target='_blank' class='indicator indicator-configurable' title='Configurable'>Configurable</a></div>",
+            "Result": "Fail",
+            "Criticality": "Shall",
+            "Details": "0 conditional access policy(s) found that meet(s) all requirements.   <strong>Near miss: </strong> MS.AAD.1.1v1 Legacy authentication SHALL be blocked would pass if the config file is updated to include: user exclusions.  Run the Start-SCuBAConfigAnalyzer cmdlet, https://github.com/cisagov/ScubaGear/blob/main/docs/configuration/scubaconfiganalyzer.md and import your ScubaResults JSON file to determine which specific exclusions to add to the configuration file.",
+            "OmittedEvaluationResult": "N/A",
+            "OmittedEvaluationDetails": "N/A",
+            "IncorrectResult": "N/A",
+            "IncorrectResultDetails": "N/A",
+            "OriginalResult": "Fail",
+            "OriginalDetails": "0 conditional access policy(s) found that meet(s) all requirements. <br/><br/><strong>Near miss: </strong> MS.AAD.1.1v1 Legacy authentication SHALL be blocked would pass if the config file is updated to include: user exclusions. <a href='#caps'>View all CA policies</a>. <a href=\"https://github.com/cisagov/ScubaGear/blob/main/docs/configuration/scubaconfiganalyzer.md\" target=\"_blank\">Run the Start-SCuBAConfigAnalyzer cmdlet</a> and import your ScubaResults JSON file to determine which specific exclusions to add to the configuration file.",
+            "Comments": [],
+            "ResolutionDate": null
+          }
+        ]
+      },
+      {
+        "GroupName": "Strong Authentication and a Secure Registration Process",
+        "GroupNumber": "3",
+        "GroupReferenceURL": "https://github.com/cisagov/ScubaGear/blob/v2.0.0/PowerShell/ScubaGear/baselines/aad.md#3-strong-authentication-and-a-secure-registration-process",
+        "Controls": [
+          {
+            "Control ID": "MS.AAD.3.7v1",
+            "Requirement": "Managed devices SHOULD be required for authentication.<div class='policy-indicators'><a href='https://github.com/cisagov/ScubaGear/blob/v2.0.0/PowerShell/ScubaGear/baselines/aad.md#key-terminology' target='_blank' class='indicator indicator-automated' title='Automated Check'>Automated Check</a><a href='https://github.com/cisagov/ScubaGear/blob/v2.0.0/docs/configuration/configuration.md#conditional-access-policy-exclusions' target='_blank' class='indicator indicator-configurable' title='Configurable'>Configurable</a></div>",
+            "Result": "Warning",
+            "Criticality": "Should",
+            "Details": "0 conditional access policy(s) found that meet(s) all requirements. ",
+            "OmittedEvaluationResult": "N/A",
+            "OmittedEvaluationDetails": "N/A",
+            "IncorrectResult": "N/A",
+            "IncorrectResultDetails": "N/A",
+            "OriginalResult": "Warning",
+            "OriginalDetails": "0 conditional access policy(s) found that meet(s) all requirements. <a href='#caps'>View all CA policies</a>",
+            "Comments": [],
+            "ResolutionDate": null
+          }
+        ]
+      }
+    ],
+    "Teams": [
+      {
+        "GroupName": "Meeting Policies",
+        "GroupNumber": "1",
+        "GroupReferenceURL": "https://github.com/cisagov/ScubaGear/blob/v2.0.0/PowerShell/ScubaGear/baselines/teams.md#1-meeting-policies",
+        "Controls": [
+          {
+            "Control ID": "MS.TEAMS.1.1v1",
+            "Requirement": "External meeting participants SHOULD NOT be enabled to request control of shared desktops or windows.",
+            "Result": "Omitted",
+            "Criticality": "Should",
+            "Details": "Test omitted by user. <span class='comment-heading'>User justification</span>\"Handled by a third-party tool\"",
+            "OmittedEvaluationResult": "Warning",
+            "OmittedEvaluationDetails": "N/A",
+            "IncorrectResult": "N/A",
+            "IncorrectResultDetails": "N/A",
+            "OriginalResult": "N/A",
+            "OriginalDetails": "This product does not currently have the capability to check compliance for this policy. See <a href=\"https://github.com/cisagov/ScubaGear/blob/v2.0.0/PowerShell/ScubaGear/baselines/aad.md#msaad22v1\" target=\"_blank\">Secure Configuration Baseline policy</a> for instructions on manual check",
+            "Comments": [],
+            "ResolutionDate": null
+          },
+          {
+            "Control ID": "MS.TEAMS.1.2v2",
+            "Requirement": "Anonymous users SHALL NOT be enabled to start meetings.",
+            "Result": "Incorrect result",
+            "Criticality": "Shall",
+            "Details": "Marked incorrect by the administrator.",
+            "OmittedEvaluationResult": "N/A",
+            "OmittedEvaluationDetails": "N/A",
+            "IncorrectResult": "Fail",
+            "IncorrectResultDetails": "N/A",
+            "OriginalResult": "N/A",
+            "OriginalDetails": "This product does not currently have the capability to check compliance for this policy. See <a href=\"https://github.com/cisagov/ScubaGear/blob/v2.0.0/PowerShell/ScubaGear/baselines/aad.md#msaad22v1\" target=\"_blank\">Secure Configuration Baseline policy</a> for instructions on manual check",
+            "Comments": [],
+            "ResolutionDate": null
+          },
+          {
+            "Control ID": "MS.TEAMS.1.3v1",
+            "Requirement": "Anonymous users and dial-in callers SHOULD NOT be admitted automatically.",
+            "Result": "Error",
+            "Criticality": "Should",
+            "Details": "This test depends on the following command(s) which did not execute successfully: Get-CsTeamsMeetingPolicy. See terminal output for more details.",
+            "OmittedEvaluationResult": "N/A",
+            "OmittedEvaluationDetails": "N/A",
+            "IncorrectResult": "N/A",
+            "IncorrectResultDetails": "N/A",
+            "OriginalResult": "N/A",
+            "OriginalDetails": "This product does not currently have the capability to check compliance for this policy. See <a href=\"https://github.com/cisagov/ScubaGear/blob/v2.0.0/PowerShell/ScubaGear/baselines/aad.md#msaad22v1\" target=\"_blank\">Secure Configuration Baseline policy</a> for instructions on manual check",
+            "Comments": [],
+            "ResolutionDate": null
+          },
+          {
+            "Control ID": "MS.TEAMS.1.4v1",
+            "Requirement": "[DELETED]",
+            "Result": "-",
+            "Criticality": "-",
+            "Details": "-",
+            "OmittedEvaluationResult": "N/A",
+            "OmittedEvaluationDetails": "N/A",
+            "IncorrectResult": "N/A",
+            "IncorrectResultDetails": "N/A",
+            "OriginalResult": "N/A",
+            "OriginalDetails": "This product does not currently have the capability to check compliance for this policy. See <a href=\"https://github.com/cisagov/ScubaGear/blob/v2.0.0/PowerShell/ScubaGear/baselines/aad.md#msaad22v1\" target=\"_blank\">Secure Configuration Baseline policy</a> for instructions on manual check",
+            "Comments": [],
+            "ResolutionDate": null
+          }
+        ]
+      }
+    ]
+  },
+  "Raw": {}
+}
