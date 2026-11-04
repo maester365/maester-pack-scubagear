@@ -1,0 +1,8 @@
+{
+  "Id": "SCUBA.M365",
+  "Name": "CISA ScubaGear",
+  "Source": "Custom",
+  "Tags": ["SCuBA"],
+  "RequiresMaester": "3.0",
+  "NoResultReason": "ScubaGear did not report a result for this policy."
+}

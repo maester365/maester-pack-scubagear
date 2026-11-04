@@ -1,0 +1,9 @@
+# Left out of the archive GitHub serves for a commit or release, which is what Install-MtPack downloads, checks
+# and installs. The catalog builder and the pack's own tests are for working on the pack, and every PowerShell
+# file in a pack may hold only functions. Check the pack as it ships with spec/ScubaGearPack.Tests.ps1, or with
+# Test-MtPack on a git archive of the commit (see .github/workflows/check-pack.yml).
+/build export-ignore
+/spec export-ignore
+/.github export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore

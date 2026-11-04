@@ -1,0 +1,80 @@
+# Checks the pack on every push and pull request: the manifest and the content checks that Install-MtPack runs
+# (Test-MtPack), then the pack's own Pester tests (spec/), which read a cut of ScubaGear's sample results and run a
+# stand-in for ScubaGear in a child process. The tests run on Windows as well, where the pack runs ScubaGear in
+# Windows PowerShell by default.
+name: Check pack
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+  # bump-version.yml calls it on the commit that raises the version, which no push event checks.
+  workflow_call:
+    inputs:
+      ref:
+        description: The commit to check.
+        type: string
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Install Maester
+        shell: pwsh
+        run: Install-PSResource -Name Maester -Prerelease -TrustRepository -Quiet
+
+      - name: Check the pack
+        shell: pwsh
+        run: |
+          Import-Module Maester
+          if (-not (Get-Command Test-MtPack -ErrorAction SilentlyContinue)) { throw 'This Maester version has no packs.' }
+          # Install-MtPack checks GitHub's archive of the commit, which leaves out the export-ignore paths of
+          # .gitattributes. git archive leaves out the same paths.
+          $shipped = Join-Path $env:RUNNER_TEMP 'pack'
+          $null = New-Item -ItemType Directory -Path $shipped -Force
+          git archive --format=tar HEAD | tar -x -C $shipped
+          if ($LASTEXITCODE -ne 0) { throw 'Could not export the pack.' }
+          $check = Test-MtPack $shipped -Official
+          $check | Format-List Id, Version, IsValid, Risk, Errors, Warnings, Findings
+          if (-not $check.IsValid) { throw 'The pack is not valid.' }
+          # Running the ScubaGear the user installed is what makes the pack High risk (UserModules). Any other
+          # High finding fails the check.
+          $high = @($check.Findings | Where-Object { $_.Severity -eq 'High' -and $_.Code -ne 'UserModules' })
+          if ($high) { throw "The content checks found $($high.Count) High risk finding(s): $($high.Code -join ', ')" }
+
+      - name: Run the pack's tests
+        shell: pwsh
+        run: |
+          Install-PSResource -Name Pester -Version '[5.5.0,6.0.0)' -TrustRepository -Quiet
+          $config = New-PesterConfiguration
+          $config.Run.Path = './spec'
+          $config.Run.Exit = $true
+          $config.Output.Verbosity = 'Detailed'
+          Invoke-Pester -Configuration $config
+
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+
+      - name: Run the pack's tests
+        shell: pwsh
+        run: |
+          Install-PSResource -Name Maester -Prerelease -TrustRepository -Quiet
+          Install-PSResource -Name Pester -Version '[5.5.0,6.0.0)' -TrustRepository -Quiet
+          $config = New-PesterConfiguration
+          $config.Run.Path = './spec'
+          $config.Run.Exit = $true
+          $config.Output.Verbosity = 'Detailed'
+          Invoke-Pester -Configuration $config

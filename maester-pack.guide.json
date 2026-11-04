@@ -1,0 +1,56 @@
+{
+  "$schema": "https://maester.dev/schemas/maester-pack-guide-1.0.json",
+  "Summary": "CISA's ScubaGear assessment of Microsoft 365, run by Maester or read from its results, with every policy result in the Maester report.",
+  "Prerequisites": [
+    { "Text": "Install the pack once.", "Command": "Install-MtPack maester365/maester-pack-scubagear" },
+    { "Text": "To let Maester run ScubaGear: Windows, and ScubaGear 2.0 or later installed in Windows PowerShell 5.1 (not PowerShell 7). Run these once in Windows PowerShell.", "Command": "Install-Module ScubaGear -Scope CurrentUser\nInitialize-SCuBA" },
+    { "Text": "To read results you already have, on any platform: the folder or ScubaResults file Invoke-SCuBA wrote." },
+    { "Text": "PowerShell 7.4 or later for Maester itself." }
+  ],
+  "Connect": {
+    "Steps": [
+      { "Text": "Optionally connect Maester to the tenant. The pack then checks that ScubaGear's results are for the same tenant, and a connection app-only with a certificate is passed on to ScubaGear.", "Command": "Connect-Maester" }
+    ],
+    "Notes": [
+      "ScubaGear runs in its own Windows PowerShell process and signs in there itself: in a sign-in window, or app-only with the app and certificate Maester is connected with.",
+      "ScubaGear 2.0 does not run in PowerShell 7: its sign-in window needs Windows PowerShell. Set ScubaGear.PowerShell to pwsh once a version of ScubaGear supports PowerShell 7."
+    ],
+    "More": "https://github.com/maester365/maester-pack-scubagear#let-maester-run-scubagear"
+  },
+  "Run": {
+    "Commands": [
+      { "Text": "Only ScubaGear", "Command": "Invoke-Maester -Pack SCUBA.M365 -SkipBuiltIn" },
+      { "Text": "Maester's tests and ScubaGear", "Command": "Invoke-Maester -Pack SCUBA.M365" }
+    ],
+    "Notes": [
+      "ScubaGear can take half an hour or more on a large tenant. Raise Execution.LongRunningTimeoutSeconds in maester-config.json if Maester stops it first."
+    ],
+    "Options": [
+      { "Name": "ScubaGear.ReportPath", "Default": "empty", "Text": "Read these ScubaGear results (the ScubaResults file, the run's folder or the -OutPath folder) instead of running ScubaGear." },
+      { "Name": "ScubaGear.MaxReportAgeDays", "Default": "7", "Text": "Refuse results older than this. 0 turns the check off." },
+      { "Name": "ScubaGear.ProductNames", "Default": "ScubaGear's default", "Text": "The products to check, for example [\"aad\", \"exo\", \"securitysuite\", \"sharepoint\", \"teams\", \"powerplatform\", \"powerbi\"]." },
+      { "Name": "ScubaGear.M365Environment", "Default": "detected", "Text": "commercial, gcc, gcchigh or dod." },
+      { "Name": "ScubaGear.ConfigFilePath", "Default": "none", "Text": "A ScubaGear configuration file, with its exclusions, omissions and annotations." },
+      { "Name": "ScubaGear.Parameters", "Default": "none", "Text": "Further Invoke-SCuBA parameters, for example { \"Organization\": \"contoso.onmicrosoft.com\" }." },
+      { "Name": "ScubaGear.OutputPath", "Default": "temporary", "Text": "Where ScubaGear writes its reports. Kept when set." },
+      { "Name": "ScubaGear.PowerShell", "Default": "powershell on Windows", "Text": "The PowerShell that runs ScubaGear: powershell, pwsh or the full path of one." },
+      { "Name": "ScubaGear.ModulePath", "Default": "newest installed", "Text": "Run the ScubaGear module at this path instead of the newest one installed." }
+    ],
+    "More": "https://github.com/maester365/maester-pack-scubagear#settings"
+  },
+  "AppOnly": {
+    "Supported": true,
+    "Methods": { "Certificate": true, "ClientSecret": false, "ManagedIdentity": false, "WorkloadIdentity": false },
+    "Text": "Connect Maester to Graph app-only with a certificate in the Windows certificate store. ScubaGear uses the same app and certificate, and the tenant's initial domain. Give the app the permissions and roles ScubaGear's documentation lists for a service principal.",
+    "Command": "Connect-MgGraph -ClientId <app id> -TenantId <tenant id> -CertificateThumbprint <thumbprint> -NoWelcome\nInvoke-Maester -Pack SCUBA.M365 -NonInteractive",
+    "More": "https://github.com/cisagov/ScubaGear/blob/main/docs/prerequisites/noninteractive.md"
+  },
+  "Links": [
+    { "Text": "About ScubaGear", "Url": "https://github.com/cisagov/ScubaGear" },
+    { "Text": "CISA's SCuBA project", "Url": "https://www.cisa.gov/resources-tools/services/secure-cloud-business-applications-scuba-project" }
+  ],
+  "Support": {
+    "Tests": "https://github.com/cisagov/ScubaGear/issues",
+    "Pack": "https://github.com/maester365/maester-pack-scubagear/issues"
+  }
+}

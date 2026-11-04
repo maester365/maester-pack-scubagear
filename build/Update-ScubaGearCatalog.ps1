@@ -1,0 +1,102 @@
+<#
+.SYNOPSIS
+Writes the policy catalog of the ScubaGear pack from a copy of CISA's ScubaGear module.
+
+.DESCRIPTION
+Reads schemas/ScubaBaselines.json, the baselines ScubaGear ships as data, and the module version from
+ScubaGear.psd1 (nothing is run), and writes the pack's catalog.json: the module and baseline versions it was
+built from and one entry per policy.
+
+The catalog lists what the pack can report before any run: the policy IDs, titles and criticality shown in the
+pack's listing. The pack also reads each policy's rationale and implementation steps from it, for the
+description and remediation of a result. Results at run time come from ScubaGear's ScubaResults file, so a policy
+added in a newer version of ScubaGear is still reported; rerun this script when the pack moves to a new version.
+
+.PARAMETER SourcePath
+The ScubaGear module folder (the one that holds ScubaGear.psd1), or a clone of
+https://github.com/cisagov/ScubaGear. Defaults to the newest installed version of the module.
+
+.PARAMETER OutputPath
+Where to write the catalog. Defaults to catalog.json at the root of this repository.
+
+.EXAMPLE
+./build/Update-ScubaGearCatalog.ps1
+
+.EXAMPLE
+./build/Update-ScubaGearCatalog.ps1 -SourcePath ~/src/ScubaGear
+#>
+[CmdletBinding()]
+param(
+    [string] $SourcePath,
+
+    [string] $OutputPath = (Join-Path -Path $PSScriptRoot -ChildPath '..' -AdditionalChildPath 'catalog.json')
+)
+
+$ErrorActionPreference = 'Stop'
+
+if (-not $SourcePath) {
+    $installed = Get-Module -Name ScubaGear -ListAvailable | Sort-Object -Property Version -Descending | Select-Object -First 1
+    if (-not $installed) { throw 'The ScubaGear module is not installed. Install it, or pass -SourcePath.' }
+    $SourcePath = $installed.ModuleBase
+}
+$manifestPath = @(
+    (Join-Path $SourcePath 'ScubaGear.psd1'),
+    (Join-Path -Path $SourcePath -ChildPath 'PowerShell' -AdditionalChildPath 'ScubaGear', 'ScubaGear.psd1')
+) | Where-Object { Test-Path -LiteralPath $_ } | Select-Object -First 1
+if (-not $manifestPath) { throw "No ScubaGear.psd1 under $SourcePath." }
+$moduleRoot = Split-Path -Parent $manifestPath
+$manifest = Import-PowerShellDataFile -LiteralPath $manifestPath
+$baselinesPath = Join-Path -Path $moduleRoot -ChildPath 'schemas' -AdditionalChildPath 'ScubaBaselines.json'
+if (-not (Test-Path -LiteralPath $baselinesPath)) { throw "No schemas/ScubaBaselines.json under $moduleRoot; ScubaGear 2.0 or later is needed." }
+$baselines = Get-Content -LiteralPath $baselinesPath -Raw -Encoding utf8 | ConvertFrom-Json
+
+# ScubaGear's product keys, as its results name them, in the order its report shows them.
+$products = [ordered]@{
+    aad           = 'AAD'
+    exo           = 'EXO'
+    securitysuite = 'SecuritySuite'
+    sharepoint    = 'SharePoint'
+    teams         = 'Teams'
+    powerplatform = 'PowerPlatform'
+    powerbi       = 'PowerBI'
+}
+
+$tests = foreach ($key in $baselines.baselines.PSObject.Properties.Name) {
+    $product = if ($products.Contains($key)) { $products[$key] } else { $key }
+    foreach ($policy in @($baselines.baselines.$key)) {
+        $controlId = [string]$policy.id
+        if ($controlId -notmatch '^(MS\.[A-Z]+\.\d+\.\d+)v\d+$') {
+            Write-Warning "$controlId is not a ScubaGear policy ID such as MS.AAD.1.1v1; skipped."
+            continue
+        }
+        $criticality = ([string]$policy.criticality).Trim()
+        [ordered]@{
+            Id             = "MP.SCUBA.M365.$($Matches[1])"
+            ControlId      = $controlId
+            Product        = $product
+            Title          = (([string]$policy.name) -replace '\s+', ' ').Trim()
+            Section        = ([string]$policy.policySection).Trim()
+            Criticality    = $criticality
+            Severity       = if ($criticality -like 'SHALL*') { 'High' } else { 'Medium' }
+            Badges         = @($policy.badges | Where-Object { $_ -and $_.label } | ForEach-Object { [string]$_.label })
+            # The technique IDs only, such as T1110.001, from names such as 'T1110.001: Password Guessing'.
+            Mitre          = @($policy.mitreMapping | Where-Object { $_ -and $_.Name -match '^(T\d{4}(?:\.\d{3})?)\b' } | ForEach-Object { ($_.Name -split ':')[0].Trim() } | Select-Object -Unique)
+            License        = @($policy.licenseRequirements | Where-Object { $_ -and $_ -ne 'N/A' } | ForEach-Object { ([string]$_).Trim() })
+            Rationale      = ([string]$policy.rationale).Trim().Trim('"').Trim()
+            Implementation = ([string]$policy.implementation).Trim().Trim('"').Trim()
+            Notes          = @($policy.notes | Where-Object { $_ } | ForEach-Object { ([string]$_).Trim() })
+            Resources      = @($policy.resources | Where-Object { $_ -and $_.Url } | ForEach-Object { [ordered]@{ Name = (([string]$_.Name) -replace '\\\|', '|' -replace '\s+', ' ').Trim(); Url = [string]$_.Url } })
+        }
+    }
+}
+
+$catalog = [ordered]@{
+    '$comment'      = 'Generated by build/Update-ScubaGearCatalog.ps1 from the ScubaGear module (CC0 1.0, CISA). Do not edit by hand.'
+    Module          = 'ScubaGear'
+    ModuleVersion   = [string]$manifest.ModuleVersion
+    BaselineVersion = ([string]$baselines.Version -split ' ')[0]
+    Source          = 'https://github.com/cisagov/ScubaGear'
+    Tests           = @($tests)
+}
+$catalog | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $OutputPath -Encoding utf8NoBOM
+Write-Information -InformationAction Continue -MessageData "Wrote $(@($tests).Count) policies from ScubaGear $($manifest.ModuleVersion) (baselines $($catalog.BaselineVersion)) to $OutputPath."

@@ -1,0 +1,6 @@
+# Maester output written while you try the pack.
+TestResults/
+test-results/
+maester-config.json
+# ScubaGear output written while you try the pack.
+M365BaselineConformance_*/

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://maester.dev/schemas/maester-pack-1.0.json",
+  "Id": "maester365.scubagear",
+  "Guid": "2a6af798-1a4b-416d-8a6f-7fe88d35c363",
+  "Name": "CISA ScubaGear for Microsoft 365",
+  "Description": "Runs CISA's ScubaGear assessment of Microsoft 365, or reads its results, and shows each of its policy results in the Maester report.",
+  "Version": "0.1.0",
+  "Publisher": "maester365",
+  "License": "MIT",
+  "Guide": "maester-pack.guide.json",
+  "Homepage": "https://github.com/maester365/maester-pack-scubagear",
+  "Support": "https://github.com/maester365/maester-pack-scubagear/issues",
+  "SecurityContact": "https://github.com/maester365/maester-pack-scubagear/security/advisories/new",
+  "RequiresMaester": ">=3.0",
+  "Code": "SCUBA.M365",
+  "Suites": ["tests"],
+  "Catalog": "catalog.json",
+  "Uses": {
+    "Services": [],
+    "GraphScopes": [],
+    "TenantWrites": [],
+    "Network": [],
+    "Modules": [
+      { "Name": "ScubaGear", "MinimumVersion": "2.0.0", "Install": "User", "Process": "Child" }
+    ]
+  },
+  "Categories": ["Microsoft 365", "CISA", "SCuBA", "Identity", "Email", "Collaboration"]
+}
