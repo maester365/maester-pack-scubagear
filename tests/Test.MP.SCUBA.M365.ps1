@@ -127,6 +127,11 @@ function ConvertTo-MtScubaGearInstance {
         [hashtable] $Catalog = @{}
     )
 
+    # The Security Suite baseline covers Defender for Office 365, data loss prevention, alerts and audit logging.
+    $baselineProduct = @{
+        AAD = 'entra'; EXO = 'exchange'; SECURITYSUITE = 'defender'; DEFENDER = 'defender'
+        SHAREPOINT = 'sharepoint'; TEAMS = 'teams'; POWERBI = 'fabric'
+    }
     $seen = [System.Collections.Generic.HashSet[string]]::new([System.StringComparer]::OrdinalIgnoreCase)
     foreach ($product in $Report.Results.PSObject.Properties) {
         foreach ($group in @($product.Value)) {
@@ -140,13 +145,18 @@ function ConvertTo-MtScubaGearInstance {
                 $requirement = ConvertFrom-MtScubaGearHtml -Html ([string]$control.Requirement -replace "(?is)<div class=['""]policy-indicators['""].*?</div>", '')
                 $criticality = [string]$control.Criticality
                 if (-not $criticality -or $criticality -eq '-') { $criticality = if ($policy) { [string]$policy.Criticality } else { '' } }
-                $tags = @('SCuBA', "SCuBA.$($product.Name)")
-                if ([string]$control.Requirement -match 'indicator-bod' -or ($policy -and $policy.Badges -contains 'BOD 25-01 Requirement')) { $tags += 'BOD25-01' }
+                # The baseline is the policy ID's second part (AAD in MS.AAD.1.1), as the ScubaGoggles pack tags GWS.GMAIL.1.1 SCuBA.GMAIL.
+                $baseline = $id.Split('.')[1]
+                $tags = @('SCuBA', "SCuBA.$baseline")
+                if ([string]$control.Requirement -match 'indicator-bod' -or ($policy -and $policy.Badges -contains 'BOD 25-01 Requirement')) { $tags += 'BOD-25-01' }
 
                 $instance = [ordered]@{
-                    Id    = $id
-                    Title = if ($requirement) { $requirement } elseif ($policy) { [string]$policy.Title } else { [string]$control.'Control ID' }
-                    Tag   = $tags
+                    Id      = $id
+                    Title   = if ($requirement) { $requirement } elseif ($policy) { [string]$policy.Title } else { [string]$control.'Control ID' }
+                    Tag     = $tags
+                    # The row is filed under the built-in CISA suite's requirement, so the report's framework view shows
+                    # ScubaGear's result next to Maester's own CISA test. Maester leaves out a requirement it does not know.
+                    Control = "cisa-scuba:$id"
                     Data  = [pscustomobject]@{
                         Product  = $product.Name
                         Group    = [string]$group.GroupName
@@ -157,6 +167,10 @@ function ConvertTo-MtScubaGearInstance {
                 }
                 if ($criticality -like 'Shall*') { $instance.Severity = 'High' }
                 elseif ($criticality -like 'Should*') { $instance.Severity = 'Medium' }
+                # Maester's product for the baseline; Power Platform has none, so its rows keep the family's.
+                $productKey = $baselineProduct[$baseline]
+                if ($productKey) { $instance.Product = $productKey }
+                if ($policy -and @($policy.Mitre).Count -gt 0) { $instance.Mitre = [string[]]@($policy.Mitre) }
                 [pscustomobject]$instance
             }
         }

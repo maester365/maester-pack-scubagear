@@ -8,12 +8,17 @@ baselines for Entra ID, Exchange Online, Defender and Purview, SharePoint, Teams
 
 Each policy result is one row, `MP.SCUBA.M365.<policy ID>` (for example `MP.SCUBA.M365.MS.AAD.1.1`), with the
 policy's requirement as its title, its rationale and remediation steps, and ScubaGear's findings. A `SHALL` policy
-has the severity High and a `SHOULD` policy Medium. Results are tagged `SCuBA`, `SCuBA.<product>` (`SCuBA.AAD`,
-`SCuBA.EXO` and so on) and, for a policy that BOD 25-01 requires, `BOD25-01`.
+has the severity High and a `SHOULD` policy Medium. Results are tagged `SCuBA`, `SCuBA.<baseline>` (`SCuBA.AAD`,
+`SCuBA.EXO` and so on) and, for a policy that BOD 25-01 requires, `BOD-25-01`. Each row is filed under Maester's
+product for its baseline (Entra ID, Exchange Online, Defender, SharePoint, Teams or Fabric; Power Platform rows stay
+under ScubaGear) with the MITRE ATT&CK techniques CISA maps the policy to.
 
 The ID leaves out the policy's version (`v1`), so a row keeps its ID when CISA revises a policy. Maester's own
 [CISA tests](https://maester.dev/docs/tests/cisa/) check some of the same policies in Maester's way; this pack shows
-ScubaGear's own results.
+ScubaGear's own results. Each row names its policy as a requirement of Maester's `cisa-scuba` framework, so the
+report's framework view shows ScubaGear's result next to Maester's test for the same policy, and a disagreement
+between the two is easy to spot. This needs Maester 3.0.0-rc59 or later; an earlier version shows the rows without
+the requirement.
 
 ## Install
 
