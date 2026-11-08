@@ -17,8 +17,10 @@ The ID leaves out the policy's version (`v1`), so a row keeps its ID when CISA r
 [CISA tests](https://maester.dev/docs/tests/cisa/) check some of the same policies in Maester's way; this pack shows
 ScubaGear's own results. Each row names its policy as a requirement of Maester's `cisa-scuba` framework, so the
 report's framework view shows ScubaGear's result next to Maester's test for the same policy, and a disagreement
-between the two is easy to spot. This needs Maester 3.0.0-rc59 or later; an earlier version shows the rows without
-the requirement.
+between the two is easy to spot. That framework covers the AAD, EXO, Security Suite and SharePoint baselines, and a
+policy has a Maester test beside it only where Maester checks it too. Rows of the other baselines (Teams, Power BI,
+Power Platform) name no requirement and appear only in the results. This needs Maester 3.0.0-rc59 or later; an
+earlier version shows the rows without the requirement.
 
 ## Install
 
