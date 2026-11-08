@@ -95,7 +95,16 @@ Describe 'ScubaGear pack' {
             $row = $script:Rows | Where-Object Id -eq 'MP.SCUBA.M365.MS.AAD.1.1'
             $row.Title | Should -Be 'Legacy authentication SHALL be blocked.'
             $row.Tag | Should -Contain 'SCuBA.AAD'
-            $row.Tag | Should -Contain 'BOD25-01'
+            $row.Tag | Should -Contain 'BOD-25-01'
+        }
+
+        It 'files each row under its CISA requirement, product and ATT&CK techniques' {
+            $row = $script:Rows | Where-Object Id -eq 'MP.SCUBA.M365.MS.AAD.1.1'
+            $row.Control | Should -Contain 'cisa-scuba:MS.AAD.1.1'
+            $row.Benchmark.Framework | Should -Be 'cisa-scuba'
+            $row.Product | Should -Be 'entra'
+            $row.Mitre | Should -Contain 'T1110'
+            ($script:Rows | Where-Object Id -eq 'MP.SCUBA.M365.MS.TEAMS.1.1').Product | Should -Be 'teams'
         }
 
         It 'describes the policy from the catalog and turns the details into Markdown' {
